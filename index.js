@@ -7,6 +7,7 @@ import {
   Text,
   ListView,
   ActivityIndicator,
+  Alert
 } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -47,7 +48,7 @@ class CameraRollPicker extends Component {
     var {groupTypes, assetType} = this.props;
 
     var fetchParams = {
-      first: 1000,
+      first: 100,
       groupTypes: groupTypes,
       assetType: assetType,
     };
@@ -142,7 +143,8 @@ class CameraRollPicker extends Component {
     } = this.props;
 
     var uri = item.node.image.uri;
-    var isSelected = (this._arrayObjectIndexOf(selected, 'uri', uri) >= 0) ? true : false;
+    // var isSelected = (this._arrayObjectIndexOf(selected, 'uri', uri) >= 0) ? true : false;
+    var isSelected = false;
 
     return (
       <ImageItem
@@ -190,6 +192,7 @@ class CameraRollPicker extends Component {
     var {maximum, imagesPerRow, callback, selectSingleItem} = this.props;
 
     var selected = this.state.selected,
+        success = true,
         index = this._arrayObjectIndexOf(selected, 'uri', image.uri);
 
     if (index >= 0) {
@@ -200,17 +203,27 @@ class CameraRollPicker extends Component {
       }
       if (selected.length < maximum) {
         selected.push(image);
+      } else {
+        Alert.alert(
+          '提示',
+          `您最多能选择${maximum}张照片`,
+          [
+            {text: '我知道了'}
+          ]
+        )
+        success = false;
       }
     }
 
     this.setState({
       selected: selected,
-      dataSource: this.state.dataSource.cloneWithRows(
-        this._nEveryRow(this.state.images, imagesPerRow)
-      ),
+      // dataSource: this.state.dataSource.cloneWithRows(
+      //   this._nEveryRow(this.state.images, imagesPerRow)
+      // ),
     });
 
     callback(selected, image);
+    return success;
   }
 
   _nEveryRow(data, n) {

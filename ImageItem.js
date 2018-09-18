@@ -10,6 +10,9 @@ import PropTypes from 'prop-types';
 class ImageItem extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      selected: props.selected
+    }
   }
 
   componentWillMount() {
@@ -23,7 +26,8 @@ class ImageItem extends Component {
   }
 
   render() {
-    var { item, selected, selectedMarker, imageMargin } = this.props;
+    var { item, selectedMarker, imageMargin } = this.props;
+    var { selected } = this.state;
 
     var marker = selectedMarker ? selectedMarker :
       <Image
@@ -46,7 +50,12 @@ class ImageItem extends Component {
   }
 
   _handleClick(item) {
-    this.props.onClick(item);
+    var success = this.props.onClick(item);
+    if (success) {
+      this.setState({
+        selected: !this.state.selected
+      })
+    }
   }
 }
 
